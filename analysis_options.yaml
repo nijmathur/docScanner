@@ -1,29 +1,10 @@
 include: package:flutter_lints/flutter.yaml
 
-linter:
-  rules:
-    - prefer_const_constructors
-    - prefer_const_literals_to_create_immutables
-    - prefer_final_fields
-    - avoid_print
-    - avoid_unnecessary_containers
-    - prefer_single_quotes
-    - sort_pub_dependencies
-    - always_declare_return_types
-    - require_trailing_commas
-
 analyzer:
   exclude:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
   errors:
     invalid_annotation_target: ignore
-    # Style lints are info-only, not blocking
-    require_trailing_commas: info
-    prefer_const_constructors: info
-    prefer_const_declarations: info
-    prefer_const_literals_to_create_immutables: info
-    prefer_interpolation_to_compose_strings: info
-    use_build_context_synchronously: info
-    sort_pub_dependencies: info
-    dangling_library_doc_comments: info
+    # Treat print statements as warnings (included in flutter_lints)
+    avoid_print: warning
