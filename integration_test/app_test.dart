@@ -88,8 +88,7 @@ void main() {
       }
     });
 
-    testWidgets('App handles back navigation',
-        (WidgetTester tester) async {
+    testWidgets('App handles back navigation', (WidgetTester tester) async {
       app.main();
       await tester.pumpAndSettle(const Duration(seconds: 2));
 

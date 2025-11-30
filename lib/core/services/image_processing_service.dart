@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:image/image.dart' as img;
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 /// Processed image result
@@ -338,9 +337,12 @@ class ImageProcessingService {
     for (int y = 0; y < src.height; y++) {
       for (int x = 0; x < src.width; x++) {
         final pixel = src.getPixel(x, y);
-        final r = ((pixel.r.toInt() - minLum) * 255 / range).clamp(0, 255).toInt();
-        final g = ((pixel.g.toInt() - minLum) * 255 / range).clamp(0, 255).toInt();
-        final b = ((pixel.b.toInt() - minLum) * 255 / range).clamp(0, 255).toInt();
+        final r =
+            ((pixel.r.toInt() - minLum) * 255 / range).clamp(0, 255).toInt();
+        final g =
+            ((pixel.g.toInt() - minLum) * 255 / range).clamp(0, 255).toInt();
+        final b =
+            ((pixel.b.toInt() - minLum) * 255 / range).clamp(0, 255).toInt();
 
         src.setPixel(x, y, img.ColorRgb8(r, g, b));
       }

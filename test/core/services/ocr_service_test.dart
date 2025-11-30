@@ -151,19 +151,22 @@ void main() {
       });
 
       test('suggestDocumentType identifies contracts', () {
-        final text = 'CONTRACT AGREEMENT\nTerms and Conditions\nThis agreement is made...';
+        final text =
+            'CONTRACT AGREEMENT\nTerms and Conditions\nThis agreement is made...';
         final type = ocrService.suggestDocumentType(text);
         expect(type, equals('Contract'));
       });
 
       test('suggestDocumentType identifies medical documents', () {
-        final text = 'MEDICAL RECORDS\nPatient Name: John Doe\nPrescription: ...';
+        final text =
+            'MEDICAL RECORDS\nPatient Name: John Doe\nPrescription: ...';
         final type = ocrService.suggestDocumentType(text);
         expect(type, equals('Medical'));
       });
 
       test('suggestDocumentType identifies letters', () {
-        final text = 'Dear Sir/Madam,\n\nI am writing to...\n\nSincerely,\nJohn Doe';
+        final text =
+            'Dear Sir/Madam,\n\nI am writing to...\n\nSincerely,\nJohn Doe';
         final type = ocrService.suggestDocumentType(text);
         expect(type, equals('Letter'));
       });

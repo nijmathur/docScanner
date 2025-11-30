@@ -96,7 +96,8 @@ void main() {
     });
 
     group('Search Logging', () {
-      test('logSearchPerformed creates audit event with query details', () async {
+      test('logSearchPerformed creates audit event with query details',
+          () async {
         when(mockDatabaseService.insertAuditEvent(any))
             .thenAnswer((_) async => {});
 
@@ -134,7 +135,8 @@ void main() {
         expect(event.payload!['method'], equals('PIN'));
       });
 
-      test('logAuthenticationFailure creates audit event with reason', () async {
+      test('logAuthenticationFailure creates audit event with reason',
+          () async {
         when(mockDatabaseService.insertAuditEvent(any))
             .thenAnswer((_) async => {});
 
@@ -197,7 +199,8 @@ void main() {
     });
 
     group('Error Logging', () {
-      test('logDecryptionError creates audit event with error message', () async {
+      test('logDecryptionError creates audit event with error message',
+          () async {
         when(mockDatabaseService.insertAuditEvent(any))
             .thenAnswer((_) async => {});
 

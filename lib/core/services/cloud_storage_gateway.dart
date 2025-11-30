@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'dart:typed_data';
-
 /// Upload progress callback
 typedef UploadProgressCallback = void Function(int sent, int total);
 

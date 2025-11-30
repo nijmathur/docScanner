@@ -105,11 +105,12 @@ class DocumentRepositoryImpl {
       final imageFileName = '${documentId}_image.enc';
       final thumbnailFileName = '${documentId}_thumb.enc';
 
-      final imagePath = path.join(_documentsStoragePath, imageFileName);
-      final thumbnailPath = path.join(_documentsStoragePath, thumbnailFileName);
+      final savedImagePath = path.join(_documentsStoragePath, imageFileName);
+      final savedThumbnailPath =
+          path.join(_documentsStoragePath, thumbnailFileName);
 
-      await File(imagePath).writeAsBytes(encryptedImage);
-      await File(thumbnailPath).writeAsBytes(encryptedThumbnail);
+      await File(savedImagePath).writeAsBytes(encryptedImage);
+      await File(savedThumbnailPath).writeAsBytes(encryptedThumbnail);
 
       // 7. Create document entity
       final document = Document(
@@ -119,8 +120,8 @@ class DocumentRepositoryImpl {
         documentType: documentType,
         captureDate: captureDate,
         createdAt: DateTime.now(),
-        encryptedImagePath: imagePath,
-        encryptedThumbnailPath: thumbnailPath,
+        encryptedImagePath: savedImagePath,
+        encryptedThumbnailPath: savedThumbnailPath,
         ocrText: ocrText,
         checksum: checksum,
         fileSizeBytes: processedImage.sizeBytes,
@@ -168,7 +169,8 @@ class DocumentRepositoryImpl {
     }
 
     try {
-      final encryptedBytes = await File(document.encryptedImagePath).readAsBytes();
+      final encryptedBytes =
+          await File(document.encryptedImagePath).readAsBytes();
       return _encryptionService.decryptBytes(
         ciphertext: encryptedBytes,
         key: _dek,
@@ -316,8 +318,7 @@ class DocumentRepositoryImpl {
 
     for (final doc in documents) {
       totalSize += doc.fileSizeBytes;
-      typeCounts[doc.documentType] =
-          (typeCounts[doc.documentType] ?? 0) + 1;
+      typeCounts[doc.documentType] = (typeCounts[doc.documentType] ?? 0) + 1;
     }
 
     return {

@@ -148,7 +148,8 @@ void main() {
           _createTestDocument(
             'doc-3',
             title: 'Contract Agreement',
-            ocrText: 'This contract is for supply of fresh fruits including mangoes',
+            ocrText:
+                'This contract is for supply of fresh fruits including mangoes',
           ),
         );
       });
@@ -252,7 +253,8 @@ void main() {
         );
 
         expect(createdEvents.length, equals(1));
-        expect(createdEvents.first.eventType, equals(AuditEventType.documentCreated));
+        expect(createdEvents.first.eventType,
+            equals(AuditEventType.documentCreated));
       });
 
       test('getAuditEvents filters by document ID', () async {

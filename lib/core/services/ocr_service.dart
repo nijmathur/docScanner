@@ -55,7 +55,7 @@ class OCRService {
 
       for (final block in recognizedText.blocks) {
         for (final line in block.lines) {
-          for (final element in line.elements) {
+          for (final _ in line.elements) {
             // Note: ML Kit doesn't directly provide confidence scores
             // This is a placeholder for when/if they add it
             totalElements++;
@@ -116,9 +116,8 @@ class OCRService {
           'right': block.boundingBox.right,
           'bottom': block.boundingBox.bottom,
         },
-        'cornerPoints': block.cornerPoints
-            .map((p) => {'x': p.x, 'y': p.y})
-            .toList(),
+        'cornerPoints':
+            block.cornerPoints.map((p) => {'x': p.x, 'y': p.y}).toList(),
         'recognizedLanguages': block.recognizedLanguages,
       });
     }
@@ -129,7 +128,8 @@ class OCRService {
   /// Extract only text content (normalized and concatenated)
   String extractPlainText(OCRResult result) {
     // Normalize: remove extra whitespace, trim lines
-    final lines = result.fullText.split('\n')
+    final lines = result.fullText
+        .split('\n')
         .map((line) => line.trim())
         .where((line) => line.isNotEmpty)
         .toList();
@@ -145,37 +145,29 @@ class OCRService {
     final datePattern = RegExp(
       r'\b\d{1,2}[-/]\d{1,2}[-/]\d{2,4}\b|\b\d{4}[-/]\d{1,2}[-/]\d{1,2}\b',
     );
-    patterns['dates'] = datePattern
-        .allMatches(text)
-        .map((m) => m.group(0)!)
-        .toList();
+    patterns['dates'] =
+        datePattern.allMatches(text).map((m) => m.group(0)!).toList();
 
     // Extract amounts/currency
     final amountPattern = RegExp(
       r'[\$£€¥]\s*\d+(?:,\d{3})*(?:\.\d{2})?|\d+(?:,\d{3})*(?:\.\d{2})?\s*[\$£€¥]',
     );
-    patterns['amounts'] = amountPattern
-        .allMatches(text)
-        .map((m) => m.group(0)!)
-        .toList();
+    patterns['amounts'] =
+        amountPattern.allMatches(text).map((m) => m.group(0)!).toList();
 
     // Extract emails
     final emailPattern = RegExp(
       r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
     );
-    patterns['emails'] = emailPattern
-        .allMatches(text)
-        .map((m) => m.group(0)!)
-        .toList();
+    patterns['emails'] =
+        emailPattern.allMatches(text).map((m) => m.group(0)!).toList();
 
     // Extract phone numbers
     final phonePattern = RegExp(
       r'\b(?:\+\d{1,3}\s?)?(?:\(\d{3}\)|\d{3})[-.\s]?\d{3}[-.\s]?\d{4}\b',
     );
-    patterns['phones'] = phonePattern
-        .allMatches(text)
-        .map((m) => m.group(0)!)
-        .toList();
+    patterns['phones'] =
+        phonePattern.allMatches(text).map((m) => m.group(0)!).toList();
 
     return patterns;
   }

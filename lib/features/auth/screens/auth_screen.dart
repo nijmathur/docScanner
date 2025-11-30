@@ -281,8 +281,7 @@ class _AuthScreenState extends State<AuthScreen> {
               if (!_isSetupMode) ...[
                 const SizedBox(height: 16),
                 OutlinedButton.icon(
-                  onPressed:
-                      _failedAttempts >= 5 ? null : _handleBiometric,
+                  onPressed: _failedAttempts >= 5 ? null : _handleBiometric,
                   icon: const Icon(Icons.fingerprint),
                   label: const Text('Use Biometric'),
                   style: OutlinedButton.styleFrom(

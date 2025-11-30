@@ -141,12 +141,18 @@ class DatabaseService {
     ''');
 
     // Indexes for performance
-    await db.execute('CREATE INDEX idx_documents_captureDate ON documents(captureDate)');
-    await db.execute('CREATE INDEX idx_documents_documentType ON documents(documentType)');
-    await db.execute('CREATE INDEX idx_documents_isDeleted ON documents(isDeleted)');
-    await db.execute('CREATE INDEX idx_audit_events_timestamp ON audit_events(timestamp)');
-    await db.execute('CREATE INDEX idx_audit_events_eventType ON audit_events(eventType)');
-    await db.execute('CREATE INDEX idx_audit_events_documentId ON audit_events(documentId)');
+    await db.execute(
+        'CREATE INDEX idx_documents_captureDate ON documents(captureDate)');
+    await db.execute(
+        'CREATE INDEX idx_documents_documentType ON documents(documentType)');
+    await db.execute(
+        'CREATE INDEX idx_documents_isDeleted ON documents(isDeleted)');
+    await db.execute(
+        'CREATE INDEX idx_audit_events_timestamp ON audit_events(timestamp)');
+    await db.execute(
+        'CREATE INDEX idx_audit_events_eventType ON audit_events(eventType)');
+    await db.execute(
+        'CREATE INDEX idx_audit_events_documentId ON audit_events(documentId)');
   }
 
   /// Handle database upgrades
@@ -373,7 +379,8 @@ class DatabaseService {
 
     await db.execute('VACUUM');
     await db.execute('ANALYZE');
-    await db.execute('INSERT INTO documents_fts(documents_fts) VALUES("optimize")');
+    await db
+        .execute('INSERT INTO documents_fts(documents_fts) VALUES("optimize")');
   }
 
   /// Close database

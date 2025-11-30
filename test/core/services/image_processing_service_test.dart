@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/material.dart';
 import 'package:doc_scanner/core/services/image_processing_service.dart';
 
 void main() {
@@ -73,67 +72,78 @@ void main() {
     group('calculateOptimalQuality', () {
       test('returns 75 for images larger than 10MP', () {
         // 4000 x 3000 = 12MP
-        final quality = imageProcessingService.calculateOptimalQuality(4000, 3000);
+        final quality =
+            imageProcessingService.calculateOptimalQuality(4000, 3000);
         expect(quality, equals(75));
       });
 
       test('returns 80 for exactly 10MP', () {
         // 4000 x 2500 = 10MP (exactly 10000000, not > 10000000)
-        final quality = imageProcessingService.calculateOptimalQuality(4000, 2500);
+        final quality =
+            imageProcessingService.calculateOptimalQuality(4000, 2500);
         expect(quality, equals(80));
       });
 
       test('returns 80 for images between 5MP and 10MP', () {
         // 3000 x 2000 = 6MP
-        final quality = imageProcessingService.calculateOptimalQuality(3000, 2000);
+        final quality =
+            imageProcessingService.calculateOptimalQuality(3000, 2000);
         expect(quality, equals(80));
       });
 
       test('returns 85 for exactly 5MP', () {
         // 2500 x 2000 = 5MP (exactly 5000000, not > 5000000)
-        final quality = imageProcessingService.calculateOptimalQuality(2500, 2000);
+        final quality =
+            imageProcessingService.calculateOptimalQuality(2500, 2000);
         expect(quality, equals(85));
       });
 
       test('returns 85 for images between 2MP and 5MP', () {
         // 2000 x 1500 = 3MP
-        final quality = imageProcessingService.calculateOptimalQuality(2000, 1500);
+        final quality =
+            imageProcessingService.calculateOptimalQuality(2000, 1500);
         expect(quality, equals(85));
       });
 
       test('returns 90 for exactly 2MP', () {
         // 2000 x 1000 = 2MP (exactly 2000000, not > 2000000)
-        final quality = imageProcessingService.calculateOptimalQuality(2000, 1000);
+        final quality =
+            imageProcessingService.calculateOptimalQuality(2000, 1000);
         expect(quality, equals(90));
       });
 
       test('returns 90 for images smaller than 2MP', () {
         // 1000 x 1000 = 1MP
-        final quality = imageProcessingService.calculateOptimalQuality(1000, 1000);
+        final quality =
+            imageProcessingService.calculateOptimalQuality(1000, 1000);
         expect(quality, equals(90));
       });
 
       test('returns 90 for very small images', () {
         // 100 x 100 = 0.01MP
-        final quality = imageProcessingService.calculateOptimalQuality(100, 100);
+        final quality =
+            imageProcessingService.calculateOptimalQuality(100, 100);
         expect(quality, equals(90));
       });
 
       test('handles wide aspect ratio images', () {
         // 4000 x 1000 = 4MP
-        final quality = imageProcessingService.calculateOptimalQuality(4000, 1000);
+        final quality =
+            imageProcessingService.calculateOptimalQuality(4000, 1000);
         expect(quality, equals(85));
       });
 
       test('handles tall aspect ratio images', () {
         // 1000 x 4000 = 4MP
-        final quality = imageProcessingService.calculateOptimalQuality(1000, 4000);
+        final quality =
+            imageProcessingService.calculateOptimalQuality(1000, 4000);
         expect(quality, equals(85));
       });
 
       test('handles square images', () {
         // 3000 x 3000 = 9MP
-        final quality = imageProcessingService.calculateOptimalQuality(3000, 3000);
+        final quality =
+            imageProcessingService.calculateOptimalQuality(3000, 3000);
         expect(quality, equals(80));
       });
     });
@@ -149,7 +159,8 @@ void main() {
 
         // 1000 * 1000 * 1 * 0.8 / 15 = 53,333
         expect(size, greaterThan(0));
-        expect(size, lessThan(1000000)); // Should be much smaller than uncompressed
+        expect(size,
+            lessThan(1000000)); // Should be much smaller than uncompressed
       });
 
       test('estimates size for color image', () {
@@ -287,7 +298,8 @@ void main() {
         const width = 3000;
         const height = 2000;
 
-        final optimalQuality = imageProcessingService.calculateOptimalQuality(width, height);
+        final optimalQuality =
+            imageProcessingService.calculateOptimalQuality(width, height);
         final estimatedSize = imageProcessingService.estimateCompressedSize(
           width: width,
           height: height,
@@ -303,7 +315,8 @@ void main() {
         const width = 800;
         const height = 600;
 
-        final optimalQuality = imageProcessingService.calculateOptimalQuality(width, height);
+        final optimalQuality =
+            imageProcessingService.calculateOptimalQuality(width, height);
         final estimatedSize = imageProcessingService.estimateCompressedSize(
           width: width,
           height: height,
@@ -319,7 +332,8 @@ void main() {
         const width = 4000;
         const height = 3000;
 
-        final optimalQuality = imageProcessingService.calculateOptimalQuality(width, height);
+        final optimalQuality =
+            imageProcessingService.calculateOptimalQuality(width, height);
         final estimatedSize = imageProcessingService.estimateCompressedSize(
           width: width,
           height: height,
@@ -350,7 +364,8 @@ void main() {
 
       test('calculateOptimalQuality handles very large dimensions', () {
         // 10000 x 10000 = 100MP
-        final quality = imageProcessingService.calculateOptimalQuality(10000, 10000);
+        final quality =
+            imageProcessingService.calculateOptimalQuality(10000, 10000);
         expect(quality, equals(75));
       });
 
@@ -366,9 +381,11 @@ void main() {
 
       test('handles rectangular images in both orientations', () {
         // Portrait
-        final qualityPortrait = imageProcessingService.calculateOptimalQuality(1000, 2000);
+        final qualityPortrait =
+            imageProcessingService.calculateOptimalQuality(1000, 2000);
         // Landscape
-        final qualityLandscape = imageProcessingService.calculateOptimalQuality(2000, 1000);
+        final qualityLandscape =
+            imageProcessingService.calculateOptimalQuality(2000, 1000);
 
         // Both should give same quality as they have same pixel count
         expect(qualityPortrait, equals(qualityLandscape));
@@ -378,8 +395,10 @@ void main() {
 
     group('Compression Ratio Validation', () {
       test('compression ratio is realistic for typical quality', () {
-        final uncompressedSize = 1000 * 1000 * 1; // 1MP grayscale = 1MB uncompressed
-        final estimatedCompressed = imageProcessingService.estimateCompressedSize(
+        final uncompressedSize =
+            1000 * 1000 * 1; // 1MP grayscale = 1MB uncompressed
+        final estimatedCompressed =
+            imageProcessingService.estimateCompressedSize(
           width: 1000,
           height: 1000,
           quality: 80,
@@ -423,7 +442,8 @@ void main() {
     group('Typical Use Cases', () {
       test('standard smartphone photo gets appropriate settings', () {
         // Typical smartphone photo: 4032 x 3024 (12MP)
-        final quality = imageProcessingService.calculateOptimalQuality(4032, 3024);
+        final quality =
+            imageProcessingService.calculateOptimalQuality(4032, 3024);
         final size = imageProcessingService.estimateCompressedSize(
           width: 4032,
           height: 3024,
@@ -438,7 +458,8 @@ void main() {
 
       test('thumbnail gets high quality and small size', () {
         // Typical thumbnail: 300 x 300
-        final quality = imageProcessingService.calculateOptimalQuality(300, 300);
+        final quality =
+            imageProcessingService.calculateOptimalQuality(300, 300);
         final size = imageProcessingService.estimateCompressedSize(
           width: 300,
           height: 300,
@@ -452,7 +473,8 @@ void main() {
 
       test('A4 scanned document at 300dpi gets appropriate settings', () {
         // A4 at 300dpi: 2480 x 3508 (~8.7MP)
-        final quality = imageProcessingService.calculateOptimalQuality(2480, 3508);
+        final quality =
+            imageProcessingService.calculateOptimalQuality(2480, 3508);
         final size = imageProcessingService.estimateCompressedSize(
           width: 2480,
           height: 3508,

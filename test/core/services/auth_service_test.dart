@@ -33,7 +33,8 @@ void main() {
 
     group('Setup and Configuration', () {
       test('isSetUp returns false when no auth method configured', () async {
-        when(mockSecureStorage.read(key: 'auth_method')).thenAnswer((_) async => null);
+        when(mockSecureStorage.read(key: 'auth_method'))
+            .thenAnswer((_) async => null);
 
         final result = await authService.isSetUp();
 
@@ -41,7 +42,8 @@ void main() {
       });
 
       test('isSetUp returns true when auth method is configured', () async {
-        when(mockSecureStorage.read(key: 'auth_method')).thenAnswer((_) async => 'pin');
+        when(mockSecureStorage.read(key: 'auth_method'))
+            .thenAnswer((_) async => 'pin');
 
         final result = await authService.isSetUp();
 
@@ -49,7 +51,8 @@ void main() {
       });
 
       test('getAuthMethod returns null when not set up', () async {
-        when(mockSecureStorage.read(key: 'auth_method')).thenAnswer((_) async => null);
+        when(mockSecureStorage.read(key: 'auth_method'))
+            .thenAnswer((_) async => null);
 
         final result = await authService.getAuthMethod();
 
@@ -57,7 +60,8 @@ void main() {
       });
 
       test('getAuthMethod returns configured method', () async {
-        when(mockSecureStorage.read(key: 'auth_method')).thenAnswer((_) async => 'pin');
+        when(mockSecureStorage.read(key: 'auth_method'))
+            .thenAnswer((_) async => 'pin');
 
         final result = await authService.getAuthMethod();
 
@@ -65,7 +69,8 @@ void main() {
       });
 
       test('getAuthMethod returns pin for invalid stored value', () async {
-        when(mockSecureStorage.read(key: 'auth_method')).thenAnswer((_) async => 'invalid');
+        when(mockSecureStorage.read(key: 'auth_method'))
+            .thenAnswer((_) async => 'invalid');
 
         final result = await authService.getAuthMethod();
 
@@ -86,16 +91,21 @@ void main() {
           salt: anyNamed('salt'),
         )).thenReturn(masterKey);
         when(mockEncryptionService.computeChecksum(any)).thenReturn(pinHash);
-        when(mockEncryptionService.computeChecksum(masterKey)).thenReturn(masterKeyHash);
-        when(mockSecureStorage.write(key: anyNamed('key'), value: anyNamed('value')))
+        when(mockEncryptionService.computeChecksum(masterKey))
+            .thenReturn(masterKeyHash);
+        when(mockSecureStorage.write(
+                key: anyNamed('key'), value: anyNamed('value')))
             .thenAnswer((_) async => {});
 
         await authService.setupPIN('123456');
 
         verify(mockEncryptionService.generateSalt()).called(1);
-        verify(mockEncryptionService.deriveKey(password: '123456', salt: salt)).called(1);
-        verify(mockSecureStorage.write(key: 'auth_method', value: 'pin')).called(1);
-        verify(mockSecureStorage.write(key: 'failed_attempts', value: '0')).called(1);
+        verify(mockEncryptionService.deriveKey(password: '123456', salt: salt))
+            .called(1);
+        verify(mockSecureStorage.write(key: 'auth_method', value: 'pin'))
+            .called(1);
+        verify(mockSecureStorage.write(key: 'failed_attempts', value: '0'))
+            .called(1);
       });
 
       test('setupPIN throws exception for non-6-digit PIN', () async {
@@ -130,74 +140,100 @@ void main() {
           salt: anyNamed('salt'),
         )).thenReturn(masterKey);
         when(mockEncryptionService.computeChecksum(any)).thenReturn('hash');
-        when(mockSecureStorage.write(key: anyNamed('key'), value: anyNamed('value')))
+        when(mockSecureStorage.write(
+                key: anyNamed('key'), value: anyNamed('value')))
             .thenAnswer((_) async => {});
 
         await authService.setupPIN('999999');
 
-        verify(mockSecureStorage.write(key: 'master_key', value: anyNamed('value'))).called(1);
-        verify(mockSecureStorage.write(key: 'pin_salt', value: anyNamed('value'))).called(1);
-        verify(mockSecureStorage.write(key: 'pin_hash', value: anyNamed('value'))).called(1);
-        verify(mockSecureStorage.write(key: 'auth_method', value: 'pin')).called(1);
-        verify(mockSecureStorage.write(key: 'failed_attempts', value: '0')).called(1);
+        verify(mockSecureStorage.write(
+                key: 'master_key', value: anyNamed('value')))
+            .called(1);
+        verify(mockSecureStorage.write(
+                key: 'pin_salt', value: anyNamed('value')))
+            .called(1);
+        verify(mockSecureStorage.write(
+                key: 'pin_hash', value: anyNamed('value')))
+            .called(1);
+        verify(mockSecureStorage.write(key: 'auth_method', value: 'pin'))
+            .called(1);
+        verify(mockSecureStorage.write(key: 'failed_attempts', value: '0'))
+            .called(1);
       });
     });
 
     group('PIN Authentication', () {
       test('authenticateWithPIN returns master key for correct PIN', () async {
         final salt = Uint8List.fromList(List.generate(32, (i) => i));
-        final saltHex = salt.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+        final saltHex =
+            salt.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
         final pinHash = 'test_hash';
         final masterKey = Uint8List.fromList(List.generate(32, (i) => i + 100));
 
-        when(mockSecureStorage.read(key: 'pin_hash')).thenAnswer((_) async => pinHash);
-        when(mockSecureStorage.read(key: 'pin_salt')).thenAnswer((_) async => saltHex);
+        when(mockSecureStorage.read(key: 'pin_hash'))
+            .thenAnswer((_) async => pinHash);
+        when(mockSecureStorage.read(key: 'pin_salt'))
+            .thenAnswer((_) async => saltHex);
         when(mockEncryptionService.computeChecksum(any)).thenReturn(pinHash);
         when(mockEncryptionService.deriveKey(
           password: anyNamed('password'),
           salt: anyNamed('salt'),
         )).thenReturn(masterKey);
-        when(mockSecureStorage.write(key: anyNamed('key'), value: anyNamed('value')))
+        when(mockSecureStorage.write(
+                key: anyNamed('key'), value: anyNamed('value')))
             .thenAnswer((_) async => {});
 
         final result = await authService.authenticateWithPIN('123456');
 
         expect(result, isNotNull);
         expect(result, equals(masterKey));
-        verify(mockSecureStorage.write(key: 'failed_attempts', value: '0')).called(1);
+        verify(mockSecureStorage.write(key: 'failed_attempts', value: '0'))
+            .called(1);
       });
 
       test('authenticateWithPIN returns null for incorrect PIN', () async {
         final salt = Uint8List.fromList(List.generate(32, (i) => i));
-        final saltHex = salt.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+        final saltHex =
+            salt.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
 
-        when(mockSecureStorage.read(key: 'pin_hash')).thenAnswer((_) async => 'correct_hash');
-        when(mockSecureStorage.read(key: 'pin_salt')).thenAnswer((_) async => saltHex);
-        when(mockSecureStorage.read(key: 'failed_attempts')).thenAnswer((_) async => '0');
-        when(mockEncryptionService.computeChecksum(any)).thenReturn('wrong_hash');
-        when(mockSecureStorage.write(key: anyNamed('key'), value: anyNamed('value')))
+        when(mockSecureStorage.read(key: 'pin_hash'))
+            .thenAnswer((_) async => 'correct_hash');
+        when(mockSecureStorage.read(key: 'pin_salt'))
+            .thenAnswer((_) async => saltHex);
+        when(mockSecureStorage.read(key: 'failed_attempts'))
+            .thenAnswer((_) async => '0');
+        when(mockEncryptionService.computeChecksum(any))
+            .thenReturn('wrong_hash');
+        when(mockSecureStorage.write(
+                key: anyNamed('key'), value: anyNamed('value')))
             .thenAnswer((_) async => {});
 
         final result = await authService.authenticateWithPIN('123456');
 
         expect(result, isNull);
-        verify(mockSecureStorage.write(key: 'failed_attempts', value: '1')).called(1);
+        verify(mockSecureStorage.write(key: 'failed_attempts', value: '1'))
+            .called(1);
       });
 
       test('authenticateWithPIN returns null for invalid PIN format', () async {
-        when(mockSecureStorage.read(key: 'failed_attempts')).thenAnswer((_) async => '0');
-        when(mockSecureStorage.write(key: anyNamed('key'), value: anyNamed('value')))
+        when(mockSecureStorage.read(key: 'failed_attempts'))
+            .thenAnswer((_) async => '0');
+        when(mockSecureStorage.write(
+                key: anyNamed('key'), value: anyNamed('value')))
             .thenAnswer((_) async => {});
 
         final result = await authService.authenticateWithPIN('12345');
 
         expect(result, isNull);
-        verify(mockSecureStorage.write(key: 'failed_attempts', value: '1')).called(1);
+        verify(mockSecureStorage.write(key: 'failed_attempts', value: '1'))
+            .called(1);
       });
 
       test('authenticateWithPIN throws when PIN not set up', () async {
-        when(mockSecureStorage.read(key: 'pin_hash')).thenAnswer((_) async => null);
-        when(mockSecureStorage.read(key: 'pin_salt')).thenAnswer((_) async => null);
+        when(mockSecureStorage.read(key: 'pin_hash'))
+            .thenAnswer((_) async => null);
+        when(mockSecureStorage.read(key: 'pin_salt'))
+            .thenAnswer((_) async => null);
 
         expect(
           () => authService.authenticateWithPIN('123456'),
@@ -207,28 +243,35 @@ void main() {
 
       test('authenticateWithPIN updates last activity on success', () async {
         final salt = Uint8List.fromList(List.generate(32, (i) => i));
-        final saltHex = salt.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+        final saltHex =
+            salt.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
         final pinHash = 'test_hash';
         final masterKey = Uint8List.fromList(List.generate(32, (i) => i + 100));
 
-        when(mockSecureStorage.read(key: 'pin_hash')).thenAnswer((_) async => pinHash);
-        when(mockSecureStorage.read(key: 'pin_salt')).thenAnswer((_) async => saltHex);
+        when(mockSecureStorage.read(key: 'pin_hash'))
+            .thenAnswer((_) async => pinHash);
+        when(mockSecureStorage.read(key: 'pin_salt'))
+            .thenAnswer((_) async => saltHex);
         when(mockEncryptionService.computeChecksum(any)).thenReturn(pinHash);
         when(mockEncryptionService.deriveKey(
           password: anyNamed('password'),
           salt: anyNamed('salt'),
         )).thenReturn(masterKey);
-        when(mockSecureStorage.write(key: anyNamed('key'), value: anyNamed('value')))
+        when(mockSecureStorage.write(
+                key: anyNamed('key'), value: anyNamed('value')))
             .thenAnswer((_) async => {});
 
         await authService.authenticateWithPIN('123456');
 
-        verify(mockSecureStorage.write(key: 'last_activity', value: anyNamed('value'))).called(1);
+        verify(mockSecureStorage.write(
+                key: 'last_activity', value: anyNamed('value')))
+            .called(1);
       });
     });
 
     group('Biometric Authentication', () {
-      test('isBiometricAvailable returns true when biometrics supported', () async {
+      test('isBiometricAvailable returns true when biometrics supported',
+          () async {
         when(mockLocalAuth.canCheckBiometrics).thenAnswer((_) async => true);
         when(mockLocalAuth.isDeviceSupported()).thenAnswer((_) async => true);
 
@@ -255,8 +298,8 @@ void main() {
       });
 
       test('getAvailableBiometrics returns list of available types', () async {
-        when(mockLocalAuth.getAvailableBiometrics())
-            .thenAnswer((_) async => [BiometricType.face, BiometricType.fingerprint]);
+        when(mockLocalAuth.getAvailableBiometrics()).thenAnswer(
+            (_) async => [BiometricType.face, BiometricType.fingerprint]);
 
         final result = await authService.getAvailableBiometrics();
 
@@ -266,7 +309,8 @@ void main() {
       });
 
       test('getAvailableBiometrics returns empty list on exception', () async {
-        when(mockLocalAuth.getAvailableBiometrics()).thenThrow(Exception('Error'));
+        when(mockLocalAuth.getAvailableBiometrics())
+            .thenThrow(Exception('Error'));
 
         final result = await authService.getAvailableBiometrics();
 
@@ -274,7 +318,8 @@ void main() {
       });
 
       test('enableBiometric throws when PIN not set up', () async {
-        when(mockSecureStorage.read(key: 'auth_method')).thenAnswer((_) async => null);
+        when(mockSecureStorage.read(key: 'auth_method'))
+            .thenAnswer((_) async => null);
 
         expect(
           () => authService.enableBiometric(),
@@ -283,7 +328,8 @@ void main() {
       });
 
       test('enableBiometric throws when biometric not available', () async {
-        when(mockSecureStorage.read(key: 'auth_method')).thenAnswer((_) async => 'pin');
+        when(mockSecureStorage.read(key: 'auth_method'))
+            .thenAnswer((_) async => 'pin');
         when(mockLocalAuth.canCheckBiometrics).thenAnswer((_) async => false);
         when(mockLocalAuth.isDeviceSupported()).thenAnswer((_) async => false);
 
@@ -294,15 +340,18 @@ void main() {
       });
 
       test('enableBiometric sets auth method to both', () async {
-        when(mockSecureStorage.read(key: 'auth_method')).thenAnswer((_) async => 'pin');
+        when(mockSecureStorage.read(key: 'auth_method'))
+            .thenAnswer((_) async => 'pin');
         when(mockLocalAuth.canCheckBiometrics).thenAnswer((_) async => true);
         when(mockLocalAuth.isDeviceSupported()).thenAnswer((_) async => true);
-        when(mockSecureStorage.write(key: anyNamed('key'), value: anyNamed('value')))
+        when(mockSecureStorage.write(
+                key: anyNamed('key'), value: anyNamed('value')))
             .thenAnswer((_) async => {});
 
         await authService.enableBiometric();
 
-        verify(mockSecureStorage.write(key: 'auth_method', value: 'both')).called(1);
+        verify(mockSecureStorage.write(key: 'auth_method', value: 'both'))
+            .called(1);
       });
 
       test('authenticateWithBiometric returns data on success', () async {
@@ -310,8 +359,10 @@ void main() {
           localizedReason: anyNamed('localizedReason'),
           options: anyNamed('options'),
         )).thenAnswer((_) async => true);
-        when(mockSecureStorage.read(key: 'pin_salt')).thenAnswer((_) async => '00112233');
-        when(mockSecureStorage.write(key: anyNamed('key'), value: anyNamed('value')))
+        when(mockSecureStorage.read(key: 'pin_salt'))
+            .thenAnswer((_) async => '00112233');
+        when(mockSecureStorage.write(
+                key: anyNamed('key'), value: anyNamed('value')))
             .thenAnswer((_) async => {});
 
         final result = await authService.authenticateWithBiometric(
@@ -319,7 +370,8 @@ void main() {
         );
 
         expect(result, isNotNull);
-        verify(mockSecureStorage.write(key: 'failed_attempts', value: '0')).called(1);
+        verify(mockSecureStorage.write(key: 'failed_attempts', value: '0'))
+            .called(1);
       });
 
       test('authenticateWithBiometric returns null on failure', () async {
@@ -327,8 +379,10 @@ void main() {
           localizedReason: anyNamed('localizedReason'),
           options: anyNamed('options'),
         )).thenAnswer((_) async => false);
-        when(mockSecureStorage.read(key: 'failed_attempts')).thenAnswer((_) async => '0');
-        when(mockSecureStorage.write(key: anyNamed('key'), value: anyNamed('value')))
+        when(mockSecureStorage.read(key: 'failed_attempts'))
+            .thenAnswer((_) async => '0');
+        when(mockSecureStorage.write(
+                key: anyNamed('key'), value: anyNamed('value')))
             .thenAnswer((_) async => {});
 
         final result = await authService.authenticateWithBiometric(
@@ -336,7 +390,8 @@ void main() {
         );
 
         expect(result, isNull);
-        verify(mockSecureStorage.write(key: 'failed_attempts', value: '1')).called(1);
+        verify(mockSecureStorage.write(key: 'failed_attempts', value: '1'))
+            .called(1);
       });
 
       test('authenticateWithBiometric returns null on exception', () async {
@@ -344,8 +399,10 @@ void main() {
           localizedReason: anyNamed('localizedReason'),
           options: anyNamed('options'),
         )).thenThrow(Exception('Biometric error'));
-        when(mockSecureStorage.read(key: 'failed_attempts')).thenAnswer((_) async => '0');
-        when(mockSecureStorage.write(key: anyNamed('key'), value: anyNamed('value')))
+        when(mockSecureStorage.read(key: 'failed_attempts'))
+            .thenAnswer((_) async => '0');
+        when(mockSecureStorage.write(
+                key: anyNamed('key'), value: anyNamed('value')))
             .thenAnswer((_) async => {});
 
         final result = await authService.authenticateWithBiometric(
@@ -358,7 +415,8 @@ void main() {
 
     group('Failed Attempts Tracking', () {
       test('getFailedAttempts returns 0 when not set', () async {
-        when(mockSecureStorage.read(key: 'failed_attempts')).thenAnswer((_) async => null);
+        when(mockSecureStorage.read(key: 'failed_attempts'))
+            .thenAnswer((_) async => null);
 
         final result = await authService.getFailedAttempts();
 
@@ -366,7 +424,8 @@ void main() {
       });
 
       test('getFailedAttempts returns stored value', () async {
-        when(mockSecureStorage.read(key: 'failed_attempts')).thenAnswer((_) async => '3');
+        when(mockSecureStorage.read(key: 'failed_attempts'))
+            .thenAnswer((_) async => '3');
 
         final result = await authService.getFailedAttempts();
 
@@ -374,7 +433,8 @@ void main() {
       });
 
       test('getFailedAttempts returns 0 for invalid value', () async {
-        when(mockSecureStorage.read(key: 'failed_attempts')).thenAnswer((_) async => 'invalid');
+        when(mockSecureStorage.read(key: 'failed_attempts'))
+            .thenAnswer((_) async => 'invalid');
 
         final result = await authService.getFailedAttempts();
 
@@ -382,7 +442,8 @@ void main() {
       });
 
       test('isLocked returns false when attempts below max', () async {
-        when(mockSecureStorage.read(key: 'failed_attempts')).thenAnswer((_) async => '3');
+        when(mockSecureStorage.read(key: 'failed_attempts'))
+            .thenAnswer((_) async => '3');
 
         final result = await authService.isLocked();
 
@@ -390,7 +451,8 @@ void main() {
       });
 
       test('isLocked returns true when max attempts reached', () async {
-        when(mockSecureStorage.read(key: 'failed_attempts')).thenAnswer((_) async => '5');
+        when(mockSecureStorage.read(key: 'failed_attempts'))
+            .thenAnswer((_) async => '5');
 
         final result = await authService.isLocked();
 
@@ -398,7 +460,8 @@ void main() {
       });
 
       test('isLocked returns true when attempts exceed max', () async {
-        when(mockSecureStorage.read(key: 'failed_attempts')).thenAnswer((_) async => '10');
+        when(mockSecureStorage.read(key: 'failed_attempts'))
+            .thenAnswer((_) async => '10');
 
         final result = await authService.isLocked();
 
@@ -408,29 +471,34 @@ void main() {
 
     group('Session Timeout', () {
       test('hasSessionTimedOut returns true when no last activity', () async {
-        when(mockSecureStorage.read(key: 'last_activity')).thenAnswer((_) async => null);
+        when(mockSecureStorage.read(key: 'last_activity'))
+            .thenAnswer((_) async => null);
 
         final result = await authService.hasSessionTimedOut();
 
         expect(result, isTrue);
       });
 
-      test('hasSessionTimedOut returns false when within timeout period', () async {
+      test('hasSessionTimedOut returns false when within timeout period',
+          () async {
         final recentTime = DateTime.now().subtract(const Duration(minutes: 5));
         when(mockSecureStorage.read(key: 'last_activity'))
             .thenAnswer((_) async => recentTime.toIso8601String());
-        when(mockSecureStorage.read(key: 'inactivity_timeout')).thenAnswer((_) async => null);
+        when(mockSecureStorage.read(key: 'inactivity_timeout'))
+            .thenAnswer((_) async => null);
 
         final result = await authService.hasSessionTimedOut();
 
         expect(result, isFalse);
       });
 
-      test('hasSessionTimedOut returns true when past timeout period', () async {
+      test('hasSessionTimedOut returns true when past timeout period',
+          () async {
         final oldTime = DateTime.now().subtract(const Duration(minutes: 20));
         when(mockSecureStorage.read(key: 'last_activity'))
             .thenAnswer((_) async => oldTime.toIso8601String());
-        when(mockSecureStorage.read(key: 'inactivity_timeout')).thenAnswer((_) async => null);
+        when(mockSecureStorage.read(key: 'inactivity_timeout'))
+            .thenAnswer((_) async => null);
 
         final result = await authService.hasSessionTimedOut();
 
@@ -438,7 +506,8 @@ void main() {
       });
 
       test('getInactivityTimeout returns default value when not set', () async {
-        when(mockSecureStorage.read(key: 'inactivity_timeout')).thenAnswer((_) async => null);
+        when(mockSecureStorage.read(key: 'inactivity_timeout'))
+            .thenAnswer((_) async => null);
 
         final result = await authService.getInactivityTimeout();
 
@@ -446,7 +515,8 @@ void main() {
       });
 
       test('getInactivityTimeout returns stored value', () async {
-        when(mockSecureStorage.read(key: 'inactivity_timeout')).thenAnswer((_) async => '30');
+        when(mockSecureStorage.read(key: 'inactivity_timeout'))
+            .thenAnswer((_) async => '30');
 
         final result = await authService.getInactivityTimeout();
 
@@ -454,12 +524,14 @@ void main() {
       });
 
       test('setInactivityTimeout stores valid timeout', () async {
-        when(mockSecureStorage.write(key: anyNamed('key'), value: anyNamed('value')))
+        when(mockSecureStorage.write(
+                key: anyNamed('key'), value: anyNamed('value')))
             .thenAnswer((_) async => {});
 
         await authService.setInactivityTimeout(30);
 
-        verify(mockSecureStorage.write(key: 'inactivity_timeout', value: '30')).called(1);
+        verify(mockSecureStorage.write(key: 'inactivity_timeout', value: '30'))
+            .called(1);
       });
 
       test('setInactivityTimeout throws for timeout less than 1', () async {
@@ -480,14 +552,17 @@ void main() {
     group('PIN Management', () {
       test('changePIN succeeds with correct old PIN', () async {
         final salt = Uint8List.fromList(List.generate(32, (i) => i));
-        final saltHex = salt.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+        final saltHex =
+            salt.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
         final pinHash = 'test_hash';
         final masterKey = Uint8List.fromList(List.generate(32, (i) => i + 100));
         final newSalt = Uint8List.fromList(List.generate(32, (i) => i + 200));
 
         // Mock authenticateWithPIN for old PIN
-        when(mockSecureStorage.read(key: 'pin_hash')).thenAnswer((_) async => pinHash);
-        when(mockSecureStorage.read(key: 'pin_salt')).thenAnswer((_) async => saltHex);
+        when(mockSecureStorage.read(key: 'pin_hash'))
+            .thenAnswer((_) async => pinHash);
+        when(mockSecureStorage.read(key: 'pin_salt'))
+            .thenAnswer((_) async => saltHex);
         when(mockEncryptionService.computeChecksum(any)).thenReturn(pinHash);
         when(mockEncryptionService.deriveKey(
           password: anyNamed('password'),
@@ -496,7 +571,8 @@ void main() {
 
         // Mock setupPIN for new PIN
         when(mockEncryptionService.generateSalt()).thenReturn(newSalt);
-        when(mockSecureStorage.write(key: anyNamed('key'), value: anyNamed('value')))
+        when(mockSecureStorage.write(
+                key: anyNamed('key'), value: anyNamed('value')))
             .thenAnswer((_) async => {});
 
         await authService.changePIN('123456', '999999');
@@ -505,11 +581,16 @@ void main() {
       });
 
       test('changePIN throws with incorrect old PIN', () async {
-        when(mockSecureStorage.read(key: 'pin_hash')).thenAnswer((_) async => 'correct_hash');
-        when(mockSecureStorage.read(key: 'pin_salt')).thenAnswer((_) async => '00112233');
-        when(mockSecureStorage.read(key: 'failed_attempts')).thenAnswer((_) async => '0');
-        when(mockEncryptionService.computeChecksum(any)).thenReturn('wrong_hash');
-        when(mockSecureStorage.write(key: anyNamed('key'), value: anyNamed('value')))
+        when(mockSecureStorage.read(key: 'pin_hash'))
+            .thenAnswer((_) async => 'correct_hash');
+        when(mockSecureStorage.read(key: 'pin_salt'))
+            .thenAnswer((_) async => '00112233');
+        when(mockSecureStorage.read(key: 'failed_attempts'))
+            .thenAnswer((_) async => '0');
+        when(mockEncryptionService.computeChecksum(any))
+            .thenReturn('wrong_hash');
+        when(mockSecureStorage.write(
+                key: anyNamed('key'), value: anyNamed('value')))
             .thenAnswer((_) async => {});
 
         expect(
@@ -521,7 +602,8 @@ void main() {
 
     group('Data Management', () {
       test('clearAuthData deletes all stored data', () async {
-        when(mockSecureStorage.delete(key: anyNamed('key'))).thenAnswer((_) async => {});
+        when(mockSecureStorage.delete(key: anyNamed('key')))
+            .thenAnswer((_) async => {});
 
         await authService.clearAuthData();
 

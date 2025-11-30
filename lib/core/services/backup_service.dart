@@ -288,9 +288,8 @@ class BackupService {
     final sourceFile = File(sourcePath);
     final encryptedWithSalt = await sourceFile.readAsBytes();
 
-    // Extract salt and encrypted data
-    final salt = encryptedWithSalt.sublist(0, 32);
-    final encrypted = encryptedWithSalt.sublist(32);
+    // Extract salt and encrypted data (salt at beginning, but not needed for decryption)
+    final encrypted = encryptedWithSalt.sublist(32); // Skip 32-byte salt prefix
 
     final decrypted = _encryptionService.decryptBytes(
       ciphertext: encrypted,

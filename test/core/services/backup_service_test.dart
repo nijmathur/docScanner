@@ -44,7 +44,8 @@ void main() {
     });
 
     group('Backup Metadata Operations', () {
-      test('listBackups returns all backups when no provider specified', () async {
+      test('listBackups returns all backups when no provider specified',
+          () async {
         final testBackups = [
           BackupMetadata(
             id: 'backup-1',
@@ -91,10 +92,12 @@ void main() {
           ),
         ];
 
-        when(mockDatabaseService.getBackupMetadata(provider: CloudProvider.googleDrive))
+        when(mockDatabaseService.getBackupMetadata(
+                provider: CloudProvider.googleDrive))
             .thenAnswer((_) async => googleBackups);
 
-        final result = await backupService.listBackups(provider: CloudProvider.googleDrive);
+        final result = await backupService.listBackups(
+            provider: CloudProvider.googleDrive);
 
         expect(result, hasLength(1));
         expect(result.first.provider, equals(CloudProvider.googleDrive));
@@ -205,7 +208,8 @@ void main() {
           password: anyNamed('password'),
           salt: anyNamed('salt'),
         )).thenReturn(bek);
-        when(mockEncryptionService.computeChecksum(any)).thenReturn('test_checksum');
+        when(mockEncryptionService.computeChecksum(any))
+            .thenReturn('test_checksum');
 
         // Verify encryption service integration
         final generatedSalt = mockEncryptionService.generateSalt();
@@ -220,7 +224,8 @@ void main() {
 
       test('backup checksum is computed correctly', () async {
         final testData = Uint8List.fromList([1, 2, 3, 4, 5]);
-        when(mockEncryptionService.computeChecksum(testData)).thenReturn('test_checksum_123');
+        when(mockEncryptionService.computeChecksum(testData))
+            .thenReturn('test_checksum_123');
 
         final checksum = mockEncryptionService.computeChecksum(testData);
 
@@ -317,15 +322,18 @@ void main() {
           version: '1.0.0',
         );
 
-        when(mockDatabaseService.insertBackupMetadata(any)).thenAnswer((_) async => {});
+        when(mockDatabaseService.insertBackupMetadata(any))
+            .thenAnswer((_) async => {});
 
         await mockDatabaseService.insertBackupMetadata(testMetadata);
 
-        verify(mockDatabaseService.insertBackupMetadata(testMetadata)).called(1);
+        verify(mockDatabaseService.insertBackupMetadata(testMetadata))
+            .called(1);
       });
 
       test('document count is retrieved from database', () async {
-        when(mockDatabaseService.getDocumentCount()).thenAnswer((_) async => 42);
+        when(mockDatabaseService.getDocumentCount())
+            .thenAnswer((_) async => 42);
 
         final count = await mockDatabaseService.getDocumentCount();
 

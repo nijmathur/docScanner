@@ -203,7 +203,7 @@ class AuditService {
     } catch (e) {
       // Critical: audit logging should not fail the main operation
       // In production, consider fallback logging mechanism
-      print('Failed to log audit event: $e');
+      // Silently fail - could implement fallback file logging here
     }
   }
 

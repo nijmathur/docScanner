@@ -63,7 +63,8 @@ class Document {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       encryptedImagePath: encryptedImagePath ?? this.encryptedImagePath,
-      encryptedThumbnailPath: encryptedThumbnailPath ?? this.encryptedThumbnailPath,
+      encryptedThumbnailPath:
+          encryptedThumbnailPath ?? this.encryptedThumbnailPath,
       ocrText: ocrText ?? this.ocrText,
       checksum: checksum ?? this.checksum,
       fileSizeBytes: fileSizeBytes ?? this.fileSizeBytes,
@@ -111,7 +112,10 @@ class Document {
       ocrText: map['ocrText'] as String,
       checksum: map['checksum'] as String,
       fileSizeBytes: map['fileSizeBytes'] as int,
-      tags: (map['tags'] as String).split(',').where((t) => t.isNotEmpty).toList(),
+      tags: (map['tags'] as String)
+          .split(',')
+          .where((t) => t.isNotEmpty)
+          .toList(),
       metadata: map['metadata'] as Map<String, dynamic>?,
       isDeleted: (map['isDeleted'] as int) == 1,
       ocrConfidence: map['ocrConfidence'] as double?,
