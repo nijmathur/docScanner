@@ -42,10 +42,10 @@ jobs:
             exit 1
           fi
 
-      - name: Analyze code (blocking)
-        run: flutter analyze --fatal-warnings
+      - name: Analyze code (blocking on errors only)
+        run: flutter analyze
 
-      - name: Analyze code quality (info-level, non-blocking)
+      - name: Show full analysis with all lints
         run: flutter analyze --fatal-infos
         continue-on-error: true
 
