@@ -6,6 +6,7 @@ import 'core/services/auth_service.dart';
 import 'core/services/database_service.dart';
 import 'core/services/encryption_service.dart';
 import 'core/services/audit_service.dart';
+import 'core/services/session_service.dart';
 
 void main() {
   runApp(const DocScannerApp());
@@ -20,6 +21,9 @@ class DocScannerApp extends StatelessWidget {
       providers: [
         Provider<EncryptionService>(
           create: (_) => EncryptionService(),
+        ),
+        ChangeNotifierProvider<SessionService>(
+          create: (_) => SessionService(),
         ),
         Provider<AuthService>(
           create: (context) => AuthService(
