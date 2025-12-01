@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/services/database_service.dart';
 import '../../../core/domain/entities/document.dart';
+import '../../camera/screens/camera_screen.dart';
+import '../../document/screens/document_view_screen.dart';
+import '../../search/screens/search_screen.dart';
+import '../../settings/screens/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -55,18 +59,22 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              // Navigate to search screen
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Search feature coming soon')),
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SearchScreen(),
+                ),
               );
             },
           ),
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
-              // Navigate to settings screen
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Settings feature coming soon')),
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SettingsScreen(),
+                ),
               );
             },
           ),
@@ -74,11 +82,17 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: _buildBody(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Navigate to camera screen
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Camera feature coming soon')),
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const CameraScreen(),
+            ),
           );
+          if (result == true && mounted) {
+            // Reload documents after scanning
+            await _loadDocuments();
+          }
         },
         child: const Icon(Icons.camera_alt),
       ),
@@ -175,21 +189,26 @@ class _HomeScreenState extends State<HomeScreen> {
               _buildQuickActionCard(
                 icon: Icons.camera_alt,
                 title: 'Scan Document',
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Camera feature coming soon'),
+                onTap: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CameraScreen(),
                     ),
                   );
+                  if (result == true && mounted) {
+                    await _loadDocuments();
+                  }
                 },
               ),
               _buildQuickActionCard(
                 icon: Icons.search,
                 title: 'Search',
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Search feature coming soon'),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SearchScreen(),
                     ),
                   );
                 },
@@ -389,13 +408,19 @@ class _HomeScreenState extends State<HomeScreen> {
             // Show document options
           },
         ),
-        onTap: () {
-          // Navigate to document view
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Document view coming soon'),
+        onTap: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DocumentViewScreen(
+                documentId: document.id,
+              ),
             ),
           );
+          if (result == true && mounted) {
+            // Document was deleted, reload list
+            await _loadDocuments();
+          }
         },
       ),
     );

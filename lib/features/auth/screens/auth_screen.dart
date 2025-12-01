@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../core/services/audit_service.dart';
+import '../../../core/services/session_service.dart';
 import '../../home/screens/home_screen.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -66,10 +67,16 @@ class _AuthScreenState extends State<AuthScreen> {
 
     try {
       final authService = context.read<AuthService>();
+      final sessionService = context.read<SessionService>();
+
       await authService.setupPIN(pin);
 
-      // Navigate to home screen
-      if (mounted) {
+      // Authenticate to get the DEK and store in session
+      final masterKey = await authService.authenticateWithPIN(pin);
+      if (masterKey != null && mounted) {
+        sessionService.setDataEncryptionKey(masterKey);
+
+        // Navigate to home screen
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const HomeScreen()),
         );
@@ -93,9 +100,13 @@ class _AuthScreenState extends State<AuthScreen> {
 
     try {
       final authService = context.read<AuthService>();
+      final sessionService = context.read<SessionService>();
       final masterKey = await authService.authenticateWithPIN(pin);
 
       if (masterKey != null) {
+        // Store DEK in session
+        sessionService.setDataEncryptionKey(masterKey);
+
         // Log successful authentication
         final auditService = context.read<AuditService>();
         await auditService.logAuthenticationSuccess(method: 'PIN');

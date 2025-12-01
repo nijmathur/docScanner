@@ -269,6 +269,11 @@ class AuthService {
     await setupPIN(newPin);
   }
 
+  /// Logout user by clearing session data
+  Future<void> logout() async {
+    await _secureStorage.delete(key: _lastActivityKey);
+  }
+
   /// Clear all authentication data (factory reset)
   Future<void> clearAuthData() async {
     await _secureStorage.delete(key: _masterKeyKey);
