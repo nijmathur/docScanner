@@ -307,7 +307,7 @@ See [Debugging Guide](docs/DEBUGGING.md) for detailed debugging instructions.
 ### Camera & Image Processing
 - `camera` - Camera access
 - `image` - Image manipulation
-- `edge_detection` - Document edge detection
+- `flutter_doc_scanner` - Document scanning with automatic edge detection and perspective correction
 
 ### OCR
 - `google_mlkit_text_recognition` - On-device OCR
