@@ -24,7 +24,7 @@
 | F1.1 | User can open camera interface from main screen | 🚧 | UI placeholder exists | Camera screen needs implementation |
 | F1.2 | App captures single or batch photos | ⏳ | - | Camera integration pending |
 | F1.3 | For each captured image: | 🚧 | Partial | - |
-| F1.3.a | Detect document edges and crop | ⏳ | - | `edge_detection` package included |
+| F1.3.a | Detect document edges and crop | ⏳ | - | `flutter_doc_scanner` package included |
 | F1.3.b | Apply perspective correction (deskew) | ⏳ | - | Package supports this |
 | F1.3.c | Apply contrast enhancement, noise reduction | ✅ | `lib/core/services/image_processing_service.dart` | Implemented |
 | F1.3.d | Compress image for storage | ✅ | `lib/core/services/image_processing_service.dart` | Quality configurable |
@@ -48,7 +48,7 @@
 | F2.4 | Normalize and concatenate OCR text | ✅ | `extractPlainText()` | Whitespace normalized |
 | F2.5 | User can manually correct/edit OCR text | ⏳ | - | UI editor needed |
 | F2.6 | Use Google ML Kit Text Recognition (on-device) | ✅ | `google_mlkit_text_recognition` | Free, commercial use OK |
-| F2.7 | Edge detection, perspective correction | 🚧 | `edge_detection` package | Integration pending |
+| F2.7 | Edge detection, perspective correction | 🚧 | `flutter_doc_scanner` package | Integration pending |
 
 **Status**: 75% Complete
 
@@ -404,9 +404,9 @@
    - **Impact**: Medium
    - **Mitigation**: Tests correctly written, just need device/emulator
 
-2. **Camera Integration** - Edge detection complexity
+2. **Camera Integration** - Document scanning complexity
    - **Impact**: Medium
-   - **Mitigation**: `edge_detection` package proven solution
+   - **Mitigation**: `flutter_doc_scanner` package - actively maintained with multi-platform support
 
 3. **UI Completion** - Multiple screens needed
    - **Impact**: High (user-facing)
