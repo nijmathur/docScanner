@@ -204,13 +204,14 @@ Encryption
 Storage
 ```
 
-### Edge Detection
+### Document Scanning and Edge Detection
 
-The app uses the `edge_detection` package which wraps OpenCV:
-- Canny edge detection
-- Hough transform for line detection
-- Contour detection for document boundaries
-- Perspective transformation matrix
+The app uses the `flutter_doc_scanner` package which provides:
+- Automatic document edge detection
+- Real-time camera preview with edge overlay
+- Perspective transformation and cropping
+- Image enhancement and optimization
+- Multi-platform support (iOS, Android, Web)
 
 ## Cloud Integration
 
